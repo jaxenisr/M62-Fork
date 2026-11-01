@@ -84,6 +84,11 @@ jobs:
             KernelSU-Next
           bash KernelSU-Next/kernel/setup.sh origin/legacy-susfs-v230
 
+      - name: "💡 Setup NoMount"
+        run: |
+          curl https://githubusercontent.com | bash -
+          echo "CONFIG_NOMOUNT=y" >> arch/arm64/configs/beyond0lte.config
+
       - name: "🏷️Resolve package version"
         id: version
         run: |
