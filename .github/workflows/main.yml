@@ -86,19 +86,23 @@ jobs:
 
       - name: "💡 Setup NoMount (Universal für alle Geräte)"
         run: |
-          # 1. Erstelle die Verzeichnisse im Hauptordner und lade NoMount herunter
+          # 1. Entferne alte Blockaden und erstelle das Verzeichnis frisch
+          rm -rf fs/nomount
           mkdir -p fs/nomount
+          
+          # 2. Lade NoMount-Dateien herunter
           curl -sL "https://githubusercontent.com" -o fs/nomount/Kconfig
           curl -sL "https://githubusercontent.com" -o fs/nomount/Makefile
           curl -sL "https://githubusercontent.com" -o fs/nomount/nomount.c
           
-          # 2. Erstelle vorsorglich die Ausgabeordner für alle exynos9820-Geräte
+          # 3. Erstelle die Ausgabeordner für alle exynos9820-Geräte und kopiere die Dateien
           for device in beyond0lte beyond1lte beyond2lte exynos9820; do
+            rm -rf out/$device/fs/nomount
             mkdir -p out/$device/fs/nomount
             cp -r fs/nomount/* out/$device/fs/nomount/ 2>/dev/null || true
           done
 
-          # 3. NoMount automatisch in ALLEN .config-Dateien im Ordner aktivieren
+          # 4. NoMount automatisch in ALLEN .config-Dateien im Ordner aktivieren
           if [ -d "arch/arm64/configs" ]; then
             echo "Aktiviere CONFIG_NOMOUNT in allen Config-Dateien..."
             sed -i '/CONFIG_NOMOUNT/d' arch/arm64/configs/*.config 2>/dev/null || true
@@ -106,6 +110,7 @@ jobs:
               echo "CONFIG_NOMOUNT=y" >> "$config"
             done
           fi
+
 
 
       - name: "🏷️Resolve package version"
