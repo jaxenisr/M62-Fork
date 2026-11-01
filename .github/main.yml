@@ -84,6 +84,23 @@ jobs:
             KernelSU-Next
           bash KernelSU-Next/kernel/setup.sh origin/legacy-susfs-v230
 
+      - name: "💡 Setup NoMount"
+        run: |
+          # 1. Das originale Skript genau so ausführen, wie du es wolltest
+          curl https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh | bash -
+          
+          # 2. Den fehleranfälligen Symlink durch echte Dateien ersetzen (wichtig für den out-Ordner!)
+          rm -f fs/nomount
+          mkdir -p fs/nomount
+          cp -r NoMount/kernel/src/* fs/nomount/
+          
+          # 3. NoMount automatisch in allen Configs aktivieren
+          if [ -d "arch/arm64/configs" ]; then
+            sed -i '/CONFIG_NOMOUNT/d' arch/arm64/configs/*.config 2>/dev/null || true
+            for c in arch/arm64/configs/*.config; do echo "CONFIG_NOMOUNT=y" >> "$c"; done
+          fi
+
+
       - name: "🏷️Resolve package version"
         id: version
         run: |
