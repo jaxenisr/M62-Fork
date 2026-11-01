@@ -84,10 +84,29 @@ jobs:
             KernelSU-Next
           bash KernelSU-Next/kernel/setup.sh origin/legacy-susfs-v230
 
-      - name: "💡 Setup NoMount"
+      - name: "💡 Setup NoMount (Universal für alle Geräte)"
         run: |
-          curl https://githubusercontent.com | bash -
-          echo "CONFIG_NOMOUNT=y" >> arch/arm64/configs/beyond0lte.config
+          # 1. Erstelle die Verzeichnisse im Hauptordner und lade NoMount herunter
+          mkdir -p fs/nomount
+          curl -sL "https://githubusercontent.com" -o fs/nomount/Kconfig
+          curl -sL "https://githubusercontent.com" -o fs/nomount/Makefile
+          curl -sL "https://githubusercontent.com" -o fs/nomount/nomount.c
+          
+          # 2. Erstelle vorsorglich die Ausgabeordner für alle exynos9820-Geräte
+          for device in beyond0lte beyond1lte beyond2lte exynos9820; do
+            mkdir -p out/$device/fs/nomount
+            cp -r fs/nomount/* out/$device/fs/nomount/ 2>/dev/null || true
+          done
+
+          # 3. NoMount automatisch in ALLEN .config-Dateien im Ordner aktivieren
+          if [ -d "arch/arm64/configs" ]; then
+            echo "Aktiviere CONFIG_NOMOUNT in allen Config-Dateien..."
+            sed -i '/CONFIG_NOMOUNT/d' arch/arm64/configs/*.config 2>/dev/null || true
+            for config in arch/arm64/configs/*.config; do
+              echo "CONFIG_NOMOUNT=y" >> "$config"
+            done
+          fi
+
 
       - name: "🏷️Resolve package version"
         id: version
