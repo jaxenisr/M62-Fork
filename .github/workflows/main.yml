@@ -147,6 +147,13 @@ jobs:
           path: ${{ github.workspace }}/upload/*.zip
 
 
+
+build-droidspaces:
+    name: Build Droidspaces Kernel
+
+
+    
+
   # Publishes both kernels to this repository's releases, tagged with the derived
   # kernel version. Running inside the same repository means the default
   # GITHUB_TOKEN is sufficient, so no extra secret is required.
