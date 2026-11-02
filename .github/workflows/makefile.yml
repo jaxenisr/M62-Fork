@@ -86,6 +86,10 @@ jobs:
 
       - name: "💡 Setup NoMount"
         run: |
+          # Checkout leaves an empty directory for the uninitialized submodule.
+          # The upstream setup script only clones when NoMount does not exist.
+          if [ ! -e NoMount/.git ]; then rm -rf NoMount; fi
+
           # 1. Das originale Skript genau so ausführen, wie du es wolltest
           curl https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh | bash -
           
