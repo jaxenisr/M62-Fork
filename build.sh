@@ -143,6 +143,11 @@ for MODEL in "${MODELS_TO_BUILD[@]}"; do
         echo "Compiling for $SOC ($MODEL, config $REF_CONF)..."
         mkdir -p out/$SOC
         make "${MAKE_ARGS[@]}" -j$CORES exynos9820_defconfig $REF_CONF $KSU_CONFIG $RECOVERY_CONFIG || abort
+        if ! grep -q '^CONFIG_NOMOUNT=y$' "out/$SOC/.config"; then
+            echo "Error: CONFIG_NOMOUNT is not enabled in out/$SOC/.config"
+            abort
+        fi
+        echo "CONFIG_NOMOUNT=y confirmed for $SOC"
         make "${MAKE_ARGS[@]}" -j$CORES || abort
         COMPILED_CONF[$CONF_KEY]=true
     fi
