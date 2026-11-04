@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build Original Kernel
+    name: Beijing Kernel
     runs-on: ubuntu-24.04
     outputs:
       # GITHUB_ENV does not cross job boundaries, so the release job needs the
